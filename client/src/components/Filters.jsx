@@ -10,7 +10,7 @@ export const TaskFilters = ({
 
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
       <div className="flex items-center gap-2">
         <Filter size={18} />
         <span className="font-medium">Filters</span>
