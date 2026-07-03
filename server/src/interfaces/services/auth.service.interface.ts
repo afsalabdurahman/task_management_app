@@ -1,3 +1,4 @@
+import { UserResponseDTO } from '../../dtos/user.response.dto';
 import { IUser} from '../../models/user.model';
 
 export interface IAuthService {

@@ -14,9 +14,7 @@ export const signupApi = async (userData) => {
 
 export const login = async (credentials) => {
   try {
-    console.log("Login API called with credentials:", credentials);
     const response = await api.post(ROUTES.Auth.LOGIN, credentials);
-    console.log("Login API response:", response.data);
     return response.data.user;
   } catch (error) {
     toast.error("Invalid user email or password" || "Login failed");
@@ -31,3 +29,11 @@ export const logout = async () => {
     throw error.response.data;
   }
 };
+export const getCurrentUser = async () => {
+  try {
+    const response = await api.get(ROUTES.Auth.CURRENT_USER);
+    return response.data.user;
+  } catch (error) {
+    throw error.response.data;
+  }
+}

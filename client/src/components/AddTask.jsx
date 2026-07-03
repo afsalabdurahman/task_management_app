@@ -22,7 +22,6 @@ export const AddTask = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
     setShowModal(false);
   };
 

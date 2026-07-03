@@ -3,7 +3,6 @@ import SoftAurora from "../components/reusable/ba";
 export const LandingPage=()=> {
   const navigate = useNavigate();
 const signUp = () => {
-  console.log("Navigating to signup page");
   navigate('/signup');
 }
 

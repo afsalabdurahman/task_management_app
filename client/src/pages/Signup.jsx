@@ -41,7 +41,7 @@ export const SignupPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-console.log("Form Data Submitted:", formData); // Log the form data for debugging
+
     const validationErrors =
       validateSignupForm(formData);
 
@@ -52,10 +52,9 @@ console.log("Form Data Submitted:", formData); // Log the form data for debuggin
       return;
     }
 
-    console.log("Signup Data:", formData);
     try {
       const data = await signupApi(formData);
-      console.log("Signup successful:", data);
+      toast.success("Signup successful! Please log in.");
       navigate("/login");
     } catch (error) {
       toast.error(error?.message || "Signup failed. Please try again.");

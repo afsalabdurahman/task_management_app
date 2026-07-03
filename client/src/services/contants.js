@@ -4,6 +4,7 @@ export const ROUTES = {
     LOGIN: 'auth/login',
     REGISTER: 'auth/register',
     Logout: 'auth/logout',
+    CURRENT_USER: 'auth/me',
   },
   DASHBOARD: 'api/dashboard',
   TASK_FORM: '/task/create',

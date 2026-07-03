@@ -6,6 +6,8 @@ import jwt from 'jsonwebtoken';
 import { IUser } from '../models/user.model';
 import { UserResponseDTO } from '../dtos/user.response.dto';
 import { validateUser } from '../utils/validators';
+import { generateAccessToken } from '../utils/jwt';
+import { NotFoundError } from '../utils/errors';
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -23,27 +25,20 @@ export class AuthService implements IAuthService {
 
     const hashed = await bcrypt.hash(data.password, 10);
     const user = await this.userRepo.create({ ...data, password: hashed , isverified: true});
-
-    const token = this.generateToken(user);
-    return token;
+return 'User registered successfully';
+    // const token = this.generateToken(user);
+    // return token;
   }
 
   async login(email: string, password: string): Promise<{ token: string; user: UserResponseDTO}> {
     const user = await this.userRepo.findByEmail(email)
-    console.log('User found:', user);
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new Error('Invalid credentials');
+      throw new NotFoundError('Invalid credentials');
     }
 
-    const token = this.generateToken(user);
+    const token = generateAccessToken({userId: user._id.toString(), email: user.email,});
     return { token, user: { ...user.toObject(), id: user._id } };
   }
 
-  private generateToken(user: IUser): string {
-    return jwt.sign(
-      { id: user._id, email: user.email, name: user.name },
-      process.env.JWT_SECRET!,
-      { expiresIn: '7d' }
-    );
-  }
+
 }

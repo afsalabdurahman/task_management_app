@@ -9,6 +9,7 @@ import { connectDB } from "./config/database";
 import authRoutes from "./routes/auth.routes";
 import taskRoutes from "./routes/task.routes";
 import {socketConfig} from "./config/socket"
+import{errorMiddleware} from "./middlewares/error.miidleware"
 dotenv.config();
 
 const app = express();
@@ -25,7 +26,6 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
-console.log(process.env.JWT_SECRET,"JWT SECRET")
 app.use(cookieParser());
 app.use(express.json());
 
@@ -55,6 +55,6 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-
+app.use(errorMiddleware)
 startServer();
 export {socketConfig}

@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import { getIO } from '../config/socket';
 import { validateTask } from '../utils/validators';
 import { ValidationError } from '../utils/errors';
+import { TaskData } from '../dtos/task.response.dto';
 
 @injectable()
 export class TaskService implements ITaskService {
@@ -13,13 +14,14 @@ export class TaskService implements ITaskService {
     @inject('ITaskRepository') private taskRepo: ITaskRepository
   ) {}
 
-async createTask(data: any) {
+async createTask(data:TaskData) {
   const result = validateTask(data);
   if (!result.isValid) {
-    console.log(result.errors);
-    throw new Error(JSON.stringify(result.errors));
+    throw new ValidationError(JSON.stringify(result.errors));
   }
-    const task = await this.taskRepo.create({...data, userId: new mongoose.Types.ObjectId(data.userId)});
+    // ensure dueDate is a Date when creating the task (validateTask may accept string)
+    const dueDate = data.dueDate && typeof data.dueDate === 'string' ? new Date(data.dueDate) : (data.dueDate as unknown as Date | undefined);
+    const task = await this.taskRepo.create({...data, userId: new mongoose.Types.ObjectId(data.userId), dueDate});
 
     const io = getIO();
 
@@ -30,11 +32,9 @@ async createTask(data: any) {
 }
 
   async getTasksByUser(userId: string, priority?: string, status?: string): Promise<ITask[]> {
-    console.log(userId, priority, status, "Service")
-    const filter: any = { userId: new mongoose.Types.ObjectId(userId) };
-    if (priority) filter.priority = priority.toLowerCase();
-    if (status) filter.status = status.toLowerCase()=="in progress"?"in-progress":status.toLowerCase();
-    console.log(filter, "Filter in service")
+    const filter: Partial<ITask> = { userId: new mongoose.Types.ObjectId(userId) };
+    if (priority) filter.priority = priority.toLowerCase() as 'high' | 'medium' | 'low';
+    if (status) filter.status = (status.toLowerCase() === 'in progress' ? 'in-progress' : status.toLowerCase()) as 'todo' | 'in-progress' | 'completed';
     return this.taskRepo.find(filter);
   }
 
@@ -47,7 +47,6 @@ async createTask(data: any) {
 
  
     const updatedTask= await this.taskRepo.update(taskId, data)
-    console.log(updatedTask,"Updated Task")
     io.emit("taskUpdated", updatedTask);
     return updatedTask
   }
@@ -55,7 +54,6 @@ async createTask(data: any) {
   async deleteTask(taskId: string): Promise<boolean> {
     const result = await this.taskRepo.delete(taskId);
     getIO().emit("taskDeleted",taskId)
-    console.log(`Task deletion result for ID ${taskId}:`, result);
     return result;
   }
 }   

@@ -11,7 +11,7 @@ export const TaskForm = ({ isOpen, onClose ,data}) => {
     today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
     return today.toISOString().split("T")[0];
   }, []);
-  console.log("TaskForm data:", data); // Log the data prop to check its value
+  
   const [errors, seterrors] = useState({});
   const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({
@@ -21,7 +21,6 @@ export const TaskForm = ({ isOpen, onClose ,data}) => {
     status: "todo",
     dueDate: "",
   });
-console.log("TaskForm formData:", formData); // Log the formData state to check its value
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -32,7 +31,6 @@ console.log("TaskForm formData:", formData); // Log the formData state to check 
   const handleSubmit = async(e) => {
      e.preventDefault();
     const errors = validateFormData(formData);
-    console.log("Form validation result:", errors); // Log the validation result to check if it's valid
     if (Object.keys(errors).length > 0 ) {
       seterrors(errors);
       return;
@@ -46,18 +44,15 @@ console.log("TaskForm formData:", formData); // Log the formData state to check 
   
    
   } catch (error) {
-    console.error("Error updating task:", error);
     toast.error("Error updating task.");
   }
 }   else{
   try {
      await taskFormApi(formData, user?.id)
   } catch (error) {
-    console.log("Error creating task:", error.message);
     if (error) {
 
     const validationErrors = JSON.parse(error.message);
-    console.log('Validation errors:', validationErrors);
     seterrors(validationErrors);
     return;
   }

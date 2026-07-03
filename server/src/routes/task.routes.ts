@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import { TaskController } from '../controllers/task.controller';
 import {  taskDependencies, } from '../config/container';
 import { ITaskService } from '../interfaces/services/task.service.interface';
+import { authenticate } from '../middlewares/auth.user.middleware';
 taskDependencies()
 
 
@@ -12,10 +13,10 @@ const router = Router();
 const taskService = container.resolve<ITaskService>('ITaskService');
 const controller = new TaskController(taskService);
 
-router.post('/create', controller.createTask);
-router.get('/user/:userId', controller.getTasksByUser);
-router.get('/:taskId', controller.getTaskById);
-router.put('/:taskId', controller.updateTask);
-router.delete('/:taskId', controller.deleteTask );
+router.post('/create', authenticate, controller.createTask);
+router.get('/user/:userId', authenticate, controller.getTasksByUser);
+router.get('/:taskId', authenticate, controller.getTaskById);
+router.put('/:taskId', authenticate, controller.updateTask);
+router.delete('/:taskId', authenticate, controller.deleteTask );
 
 export default router;

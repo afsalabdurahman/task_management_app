@@ -2,8 +2,8 @@
 
 import jwt from 'jsonwebtoken';
 
-const env = process.env;
-const JWT_SECRET = env.JWT_SECRET ||""
+// const env = process.env;
+// const JWT_SECRET = env.JWT_SECRET ||""
 export interface AccessPayload {
   userId: string;
   email: string;
@@ -14,21 +14,25 @@ export interface RefreshPayload {
 }
 
 export const generateAccessToken = (payload: AccessPayload): string => {
-  return jwt.sign(payload, JWT_SECRET, {
+const JWT_SECRET = process.env.JWT_SECRET;
+  return jwt.sign(payload, JWT_SECRET??"", {
     expiresIn: '30m',
   });
 };
 
 export const generateRefreshToken = (payload: RefreshPayload): string => {
-  return jwt.sign(payload, JWT_SECRET, {
+  const JWT_SECRET = process.env.JWT_SECRET;
+  return jwt.sign(payload, JWT_SECRET??"", {
     expiresIn: '30d',
   });
 };
 
 export const verifyAccessToken = (token: string): AccessPayload => {
-  return jwt.verify(token, JWT_SECRET) as AccessPayload;
+  const JWT_SECRET = process.env.JWT_SECRET;
+  return jwt.verify(token, JWT_SECRET??"") as AccessPayload;
 };
 
 export const verifyRefreshToken = (token: string): RefreshPayload => {
-  return jwt.verify(token, JWT_SECRET) as RefreshPayload;
+  const JWT_SECRET = process.env.JWT_SECRET;
+  return jwt.verify(token, JWT_SECRET??"") as RefreshPayload;
 };
