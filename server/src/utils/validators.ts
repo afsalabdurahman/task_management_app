@@ -52,3 +52,46 @@ export const validateTask = (data: TaskData) => {
     errors,
   };
 };
+
+export const validateUser = (data: { name: string; email: string; password: string }) => {
+  const errors: Record<string, string> = {};
+
+  // Name
+  if (!data.name?.trim()) {
+    errors.name = "Name is required.";
+  } else if (!/^[a-zA-Z\s]+$/.test(data.name)) {
+    errors.name = "Name can only contain letters and spaces.";
+  } else if (data.name.trim().length < 3) {
+    errors.name = "Name must be at least 3 characters.";
+  } else if (data.name.trim().length > 30) {
+    errors.name = "Name cannot exceed 30 characters.";
+  }
+
+  // Email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!data.email?.trim()) {
+    errors.email = "Email is required.";
+  } else if (!emailRegex.test(data.email)) {
+    errors.email = "Email is invalid.";
+  }
+
+  // Password
+  if (!data.password?.trim()) {
+    errors.password = "Password is required.";
+  } else if (!/[A-Z]/.test(data.password)) {
+    errors.password = "Password must contain at least one uppercase letter.";
+  } else if (!/[a-z]/.test(data.password)) {
+    errors.password = "Password must contain at least one lowercase letter.";
+  } else if (!/[0-9]/.test(data.password)) {
+    errors.password = "Password must contain at least one number.";
+  } else if (data.password.trim().length < 6) {
+    errors.password = "Password must be at least 6 characters.";
+  } else if (data.password.trim().length > 20) {
+    errors.password = "Password cannot exceed 20 characters.";
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
+};

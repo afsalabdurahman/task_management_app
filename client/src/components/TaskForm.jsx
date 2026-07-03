@@ -78,7 +78,7 @@ console.log("TaskForm formData:", formData); // Log the formData state to check 
         title: data.title || "",
         description: data.description || "",
         priority: data.priority.toLowerCase() || "medium",
-        status: data.status.toLowerCase() === "in progress" ? "in-progress" : "todo",
+        status: data.status.toLowerCase() === "in-progress" ? "in-progress" : "todo",
         dueDate: formatDate(data.dueDate) || "",
       });
     }

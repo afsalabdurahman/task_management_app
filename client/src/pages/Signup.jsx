@@ -58,8 +58,9 @@ console.log("Form Data Submitted:", formData); // Log the form data for debuggin
       console.log("Signup successful:", data);
       navigate("/login");
     } catch (error) {
-      toast.error("Signup failed. Please try again.");
-        console.error("Signup failed:", error);
+      toast.error(error?.message || "Signup failed. Please try again.");
+
+    
         // Handle error (e.g., show error message to user)
       }
     // Call Signup API Here

@@ -38,4 +38,17 @@ export class AuthController {
       res.status(401).json({ success: false, message: error.message });
     }
   };
+  logout = async (req: Request, res: Response) => {
+    console.log("Logout called")
+    try {
+      res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+      });
+      res.json({ success: true, message: "Logout successful" });
+    } catch (error: any) {
+      res.status(400).json({ success: false, message: error.message });
+    }
+  };
 }

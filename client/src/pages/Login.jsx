@@ -28,7 +28,7 @@ const handleSubmit = async (e)=>{
  e.preventDefault();
   console.log(formData,"formData")
    const user=await login(formData);
-   console.log(user,"user")
+   
    localStorage.setItem('user', JSON.stringify({
       name: user.name,     // username
       email:user.email,

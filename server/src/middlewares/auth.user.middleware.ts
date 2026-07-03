@@ -14,9 +14,11 @@ export const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.accessToken;
-
+  
+  const token = req.cookies.token;
+console.log(token,"token est")
   if (!token) {
+    console.log("No token found000000")
     return next(
       new UnauthorizedError(
         MESSAGES.AUTH.NO_ACCESS_TOKEN,
@@ -27,11 +29,13 @@ export const authenticate = async (
 
   try {
     const payload = verifyAccessToken(token);
+    console.log(payload,"PAYLOADDDDDDDDDDDDDDDDDDDDDDDDD")
     console.log('Authenticated user:', payload);
     req.user = payload;
 
     next();
-  } catch {
+  } catch (error) {
+    console.error('Error occurred while verifying access token:', error);
     return next(
       new UnauthorizedError(
         MESSAGES.AUTH.NO_ACCESS_TOKEN,

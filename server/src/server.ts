@@ -25,7 +25,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
-
+console.log(process.env.JWT_SECRET,"JWT SECRET")
 app.use(cookieParser());
 app.use(express.json());
 

@@ -1,4 +1,5 @@
 import  { useNavigate } from 'react-router-dom';
+import SoftAurora from "../components/reusable/ba";
 export const LandingPage=()=> {
   const navigate = useNavigate();
 const signUp = () => {
@@ -10,15 +11,37 @@ const signUp = () => {
 
   return (
     <div className="min-h-screen">
+       
       {/* Hero */}
-      <section
-        className="relative min-h-screen bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2070&auto=format&fit=crop')",
-        }}
-      >
-        {/* Overlay */}
+   <section className="relative min-h-screen overflow-hidden">
+        {/* Background Image */}
+        <img
+          src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2070&auto=format&fit=crop"
+          alt="Office"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+
+        {/* Aurora */}
+        <div className="absolute inset-0 opacity-70">
+          <SoftAurora
+            speed={0.6}
+            scale={1.5}
+            brightness={1}
+            color1="#ffffff"
+            color2="#8b5cf6"
+            noiseFrequency={2.5}
+            noiseAmplitude={1}
+            bandHeight={0.5}
+            bandSpread={1}
+            octaveDecay={0.1}
+            layerOffset={0}
+            colorSpeed={1}
+            enableMouseInteraction={true}
+            mouseInfluence={0.25}
+          />
+        </div>
+
+        {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/70" />
 
         {/* Navbar */}
@@ -33,9 +56,10 @@ const signUp = () => {
             </h1>
           </div>
 
-          
-
-          <button onClick={()=>signUp()} className="rounded-xl bg-white px-5 py-3 font-semibold text-slate-900">
+          <button
+            onClick={signUp}
+            className="rounded-xl bg-white px-5 py-3 font-semibold text-slate-900 transition hover:scale-105"
+          >
             Get Started
           </button>
         </nav>
@@ -62,15 +86,17 @@ const signUp = () => {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <button onClick={()=>signUp()} className="rounded-xl bg-white px-8 py-4 font-semibold text-slate-900 transition hover:scale-105">
+              <button
+                onClick={signUp}
+                className="rounded-xl bg-white px-8 py-4 font-semibold text-slate-900 transition hover:scale-105"
+              >
                 Start Free
               </button>
-
-           
             </div>
           </div>
         </div>
       </section>
+
 
       {/* Features */}
       <section className="bg-slate-50 px-6 py-20 lg:px-20">
