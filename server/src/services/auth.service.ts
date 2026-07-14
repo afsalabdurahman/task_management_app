@@ -16,6 +16,7 @@ export class AuthService implements IAuthService {
   ) {}
 
   async register(data: { name: string; email: string; password: string }): Promise<string> {
+    console.log("status: ", data)
     const isValid = validateUser(data);
     if (!isValid.isValid) {
       throw new Error(Object.values(isValid.errors)[0]);
