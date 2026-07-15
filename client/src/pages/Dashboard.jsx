@@ -75,6 +75,7 @@ const [hasMore, setHasMore] = useState(true);
   };
 
   const handleDelete = (task) => {
+    
     setDeletedTaskId(task._id);
     setShowDeleteModal(true);
   };
@@ -88,6 +89,18 @@ const [hasMore, setHasMore] = useState(true);
       navigate("/login");
     }
     if (savedUser) setUser(JSON.parse(savedUser));
+    socket.connect();
+
+  socket.on("connect", () => {
+    console.log("Connected", socket.id);
+  });
+
+  
+
+  return () => {
+    socket.off("connect");
+    
+  };
   }, []);
 
 // scroll
@@ -147,6 +160,27 @@ useEffect(() => {
   // Socket listeners
   useEffect(() => {
     socket.on("taskCreated", (newTask) => {
+       setCount((prev) => ({
+      ...prev,
+      total: prev.total + 1,
+      high: newTask.priority === "high" ? prev.high + 1 : prev.high,
+      inprogress:
+        newTask.status === "in-progress"
+          ? prev.inprogress + 1
+          : prev.inprogress,
+      completed:
+        newTask.status === "completed"
+          ? prev.completed + 1
+          : prev.completed,
+    }));
+
+    setTasks((prev) =>
+      prev.some((task) => task._id === newTask._id)
+        ? prev
+        : [newTask, ...prev]
+    );
+
+
       setTasks((prev) => prev.some((t) => t._id === newTask._id) ? prev : [newTask, ...prev]);
     });
 
@@ -155,7 +189,34 @@ useEffect(() => {
     });
 
     socket.on("taskDeleted", (id) => {
-      setTasks((prev) => prev.filter((task) => task._id !== id));
+ setTasks((prevTasks) => {
+    const taskToDelete = prevTasks.find((task) => task._id === id);
+
+    if (!taskToDelete) {
+      console.warn("Task not found:", id);
+      return prevTasks;
+    }
+
+    // Safely update count - never go below 0
+    setCount((prevCount) => ({
+      ...prevCount,
+      total: Math.max(0, prevCount.total - 1),
+      high: Math.max(0, taskToDelete.priority === "high" ? prevCount.high - 1 : prevCount.high),
+      inprogress: Math.max(
+        0,
+        taskToDelete.status === "in-progress" ? prevCount.inprogress - 1 : prevCount.inprogress
+      ),
+      completed: Math.max(
+        0,
+        taskToDelete.status === "completed" ? prevCount.completed - 1 : prevCount.completed
+      ),
+    }));
+
+    // Remove the task
+    return prevTasks.filter((task) => task._id !== id);
+  });
+
+    //  setTasks((prev) => prev.filter((task) => task._id !== id));
     });
 
     return () => {
@@ -163,6 +224,7 @@ useEffect(() => {
       socket.off("taskUpdated");
       socket.off("taskDeleted");
     };
+    console.log("socket inial")
   }, []);
 useEffect(() => {
     return () => {
@@ -376,7 +438,13 @@ if(!user) {
             Loading more tasks...
           </div>
         )}
-{!hasMore && <div className="end">You've reached the end</div>}
+{!hasMore && (
+  <div className="w-full flex justify-center py-8">
+    <span className="text-white text-lg font-semibold">
+      You've reached the end.
+    </span>
+  </div>
+)}
             {/* BACK SIDE - Charts (3D Flip) */}
             <div className="absolute inset-0 backface-hidden" style={{ transform: 'rotateY(180deg)' }}>
               <div className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-3xl p-8 min-h-[700px]">
