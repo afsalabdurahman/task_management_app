@@ -25,17 +25,18 @@ api.post(ROUTES.TASK_FORM, {
     }
   });
 }
-export const fetchUserData = async (userId,priority,status)=>{
+export const fetchUserData = async (userId,priority,status,cursor)=>{
 try {
   
   
- const url =
+ const url = cursor?
   ROUTES.FETCH_TASK_BY_USER.replace(":userId", userId) +
+  `?priority=${priority === "All" ? "" : priority}&status=${status === "All" ? "" : status}&limit=5&cursor=${cursor}`: ROUTES.FETCH_TASK_BY_USER.replace(":userId", userId) +
   `?priority=${priority === "All" ? "" : priority}&status=${status === "All" ? "" : status}`;
 
 const response = await api.get(url);
 
-    return response.data.tasks
+    return response.data
 
 } catch (error) {
   throw new Error("Error fetching user data: " + error.message);

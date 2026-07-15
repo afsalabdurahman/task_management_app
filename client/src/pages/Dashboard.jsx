@@ -12,7 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { AddTask } from "../components/AddTask";
 import { TaskFilters } from "../components/Filters";
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useRef, useCallback} from "react";
 import { TaskForm } from "../components/TaskForm";
 import { socket } from "../services/socket";
 import { deleteTaskApi, fetchUserData } from "../api/taskApi";
@@ -40,11 +40,17 @@ export const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [deletedTaskId, setDeletedTaskId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
-
+  const [count,setCount]=useState()
+const [page, setPage] = useState(1);
+const [cursor, setCursor] = useState(null);
+const [loading, setLoading] = useState(false);
+const observer = useRef();
+const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
   const getPriorityStyle = (priority) => {
@@ -84,19 +90,59 @@ export const Dashboard = () => {
     if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
-  // Fetch tasks
-  useEffect(() => {
-    const fetchTasks = async () => {
-      if (!user?.id) return;
-      try {
-        const fetchedTasks = await fetchUserData(user.id, priority, status);
-        setTasks(fetchedTasks || []);
-      } catch (error) {
-        console.error("Failed to fetch tasks", error);
+// scroll
+const lastTaskRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchTasks(true); // Load more
       }
-    };
-    fetchTasks();
-  }, [priority, status, user]);
+    });
+
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore]);
+
+// 
+
+
+const fetchTasks = async (isLoadMore = false) => {
+    if (!user?.id) return;
+
+    setLoading(true);
+
+    try {
+      const fetched = await fetchUserData(user.id, priority, status, isLoadMore ? cursor : null);
+
+setCount(fetched?.counts)
+      if (isLoadMore) {
+        setTasks(prev => [...prev, ...fetched.tasks]);
+      } else {
+        setTasks(fetched.tasks || []);
+      }
+
+      setCursor(fetched.nextCursor || null);
+      setHasMore(fetched.hasMore ?? true);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load tasks");
+    } finally {
+      setLoading(false);
+      setInitialLoading(false);
+    }
+  };
+
+  // Fetch tasks
+useEffect(() => {
+    if (!user?.id) return;
+
+    setTasks([]);
+    setCursor(null);
+    setHasMore(true);
+    fetchTasks(false);
+    
+  }, [priority, status, user?.id]);
 
   // Socket listeners
   useEffect(() => {
@@ -118,7 +164,12 @@ export const Dashboard = () => {
       socket.off("taskDeleted");
     };
   }, []);
-
+useEffect(() => {
+    return () => {
+      if (observer.current) observer.current.disconnect();
+    };
+   
+  }, []);
   const handleLogout = async () => {
     localStorage.removeItem("user");
     socket.disconnect();
@@ -155,6 +206,7 @@ export const Dashboard = () => {
       borderRadius: 8,
     }]
   };
+
 if(!user) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-900">
@@ -162,6 +214,7 @@ if(!user) {
     </div>
   );
 }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 overflow-auto">
       <div className="fixed inset-0 -z-10 opacity-40">
@@ -212,24 +265,24 @@ if(!user) {
         <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur-xl">
             <p className="text-xs text-slate-400">TOTAL TASKS</p>
-            <p className="mt-2 text-4xl font-semibold text-white">{tasks.length}</p>
+            <p className="mt-2 text-4xl font-semibold text-white">{count?.total}</p>
           </div>
           <div className="rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur-xl">
             <p className="text-xs text-slate-400">COMPLETED</p>
             <p className="mt-2 text-4xl font-semibold text-emerald-400">
-              {tasks.filter(t => t.status?.toLowerCase() === "completed").length}
+              {count?.completed}
             </p>
           </div>
           <div className="rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur-xl">
             <p className="text-xs text-slate-400">IN PROGRESS</p>
             <p className="mt-2 text-4xl font-semibold text-blue-400">
-              {tasks.filter(t => t.status?.toLowerCase() === "in-progress").length}
+              {count?.inprogress}
             </p>
           </div>
           <div className="rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur-xl">
             <p className="text-xs text-slate-400">HIGH PRIORITY</p>
             <p className="mt-2 text-4xl font-semibold text-red-400">
-              {tasks.filter(t => t.priority?.toLowerCase() === "high").length}
+             {count?.high}
             </p>
           </div>
         </div>
@@ -256,8 +309,8 @@ if(!user) {
                     <p className="mt-2 text-slate-500">Create your first task to get started</p>
                   </div>
                 ) : (
-                  tasks.map((task) => (
-                    <div key={task._id} className="group relative rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl transition-all hover:-translate-y-2 hover:border-indigo-500/30">
+                  tasks.map((task,index) => (
+                    <div key={task._id} ref={index===tasks.length-1?lastTaskRef:null} className="group relative rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl transition-all hover:-translate-y-2 hover:border-indigo-500/30">
                             <div className={`absolute -right-1 -top-1 rounded-bl-3xl rounded-tr-3xl px-4 py-1 text-xs font-semibold uppercase tracking-wider ${getPriorityStyle(task.priority)}`}>
                   {task.priority}
                 </div>
@@ -318,7 +371,12 @@ if(!user) {
                 )}
               </div>
             </div>
-
+            {loading && (
+          <div className="col-span-full py-10 text-center text-slate-400">
+            Loading more tasks...
+          </div>
+        )}
+{!hasMore && <div className="end">You've reached the end</div>}
             {/* BACK SIDE - Charts (3D Flip) */}
             <div className="absolute inset-0 backface-hidden" style={{ transform: 'rotateY(180deg)' }}>
               <div className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-3xl p-8 min-h-[700px]">
