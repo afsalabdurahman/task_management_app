@@ -18,12 +18,19 @@ async findWithPagination(
   tasks: ITask[];
   nextCursor: string | null;
   hasMore: boolean;
+  counts: {
+    total: number;
+    completed: number;
+    inprogress: number;
+    high: number;
+  };
 }> {
+  console.log(cursor,"cursor")
   let query = this.model.find(filter);
 
   // If cursor exists, fetch items after this cursor
   if (cursor) {
-    query = query.where('_id').gt(cursor as any);  // Convert string to ObjectId
+    query = query.where('_id').gt(cursor as any );  // Convert string to ObjectId
   }
 
   const tasks = await query
@@ -37,11 +44,28 @@ async findWithPagination(
   const nextCursor = hasMore && paginatedTasks.length > 0
     ? paginatedTasks[paginatedTasks.length - 1]._id.toString()
     : null;
+const result= await this.model.aggregate([
+  { $match: filter },
+  {
+    $facet: {
+      total: [{ $count: "count" }],
+      completed: [{ $match: { status: "completed" } }, { $count: "count" }],
+      inprogress: [{ $match: { status: "in-progress" } }, { $count: "count" }],
+      high: [{ $match: { priority: "high" } }, { $count: "count" }]
+    }
+  }
+]); 
 
   return {
     tasks: paginatedTasks,
     nextCursor,
     hasMore,
+    counts:{
+      total: result[0].total.length > 0 ? result[0].total[0].count : 0,
+      completed: result[0].completed.length > 0 ? result[0].completed[0].count : 0,
+      inprogress: result[0].inprogress.length > 0 ? result[0].inprogress[0].count : 0,
+      high: result[0].high.length > 0 ? result[0].high[0].count : 0
+    }
   };
 }
 

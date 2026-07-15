@@ -31,13 +31,13 @@ async createTask(data:TaskData) {
     return task;
 }
 
-  async getTasksByUser(userId: string, priority?: string, status?: string, cursor?: string): Promise<{ tasks: ITask[]; nextCursor: string | null; hasMore: boolean }> {
+  async getTasksByUser(userId: string, priority?: string, status?: string, cursor?: string): Promise<{ tasks: ITask[]; nextCursor: string | null; hasMore: boolean, counts: { total: number; completed: number; inprogress: number; high: number; }   }> {
     const filter: Partial<ITask> = { userId: new mongoose.Types.ObjectId(userId) };
     if (priority) filter.priority = priority.toLowerCase() as 'high' | 'medium' | 'low';
     if (status) filter.status = (status.toLowerCase() === 'in progress' ? 'in-progress' : status.toLowerCase()) as 'todo' | 'in-progress' | 'completed';
-    const { tasks ,nextCursor,hasMore} = await this.taskRepo.findWithPagination(filter, 3, cursor);
-    console.log({ tasks, nextCursor, hasMore }, "result");
-    return { tasks, nextCursor, hasMore };
+    const { tasks ,nextCursor,hasMore,counts} = await this.taskRepo.findWithPagination(filter, 3, cursor);
+
+    return { tasks, nextCursor, hasMore, counts };
   }
 
   async getTaskById(taskId: string): Promise<ITask | null> {

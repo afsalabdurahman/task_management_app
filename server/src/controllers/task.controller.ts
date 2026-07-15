@@ -17,12 +17,12 @@ export class TaskController {
   };
 
   getTasksByUser = async (req: Request, res: Response) => {
-  console.log(req.query,"bosyy")
+ 
     const cursor = req.query.cursor as string | undefined;
       const prority = req.query.priority as string | undefined;
       const status = req.query.status as string | undefined;
-      const { tasks ,nextCursor,hasMore} = await this.taskService.getTasksByUser(req.params.userId as string, prority, status,cursor);
-      res.json({ success: true, tasks, nextCursor, hasMore });
+      const { tasks ,nextCursor,hasMore,counts} = await this.taskService.getTasksByUser(req.params.userId as string, prority, status,cursor);
+      res.json({ success: true, tasks, nextCursor, hasMore,counts });
     
   };
 
