@@ -269,6 +269,7 @@ useEffect(() => {
     }]
   };
 
+
 if(!user) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-slate-900">
@@ -276,7 +277,21 @@ if(!user) {
     </div>
   );
 }
-
+//   if (loading) {
+//   return (
+//     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+//       <div className="flex flex-col items-center gap-4">
+//         {/* Spinner */}
+//         <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+        
+//         {/* Loading Text */}
+//         <p className="text-white text-xl font-medium tracking-wide">
+//           Loading...
+//         </p>
+//       </div>
+//     </div>
+//   );
+// }
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 overflow-auto">
       <div className="fixed inset-0 -z-10 opacity-40">
@@ -350,7 +365,17 @@ if(!user) {
         </div>
 
         {/* Main Content with 3D Flip Card */}
-        <div className="relative" style={{ perspective: '1500px' }}>
+       {loading?(<div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+      <div className="flex flex-col items-center gap-4">
+        {/* Spinner */}
+        <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+        
+        {/* Loading Text */}
+        <p className="text-white text-xl font-medium tracking-wide">
+          Loading...
+        </p>
+      </div>
+    </div>):( <div className="relative" style={{ perspective: '1500px' }}>
           <div 
             className={`relative transition-transform duration-700 ease-out`}
             style={{ 
@@ -482,7 +507,7 @@ if(!user) {
               </div>
             </div>
           </div>
-        </div>
+        </div>)}
       </div>
 
       {/* Modals */}
