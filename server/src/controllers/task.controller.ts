@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { injectable, inject } from 'tsyringe';
 import {  ITaskService} from '../interfaces/services/task.service.interface';
 import {socketConfig} from "../server"
+import { HTTP_STATUS } from '../constants/HTTP_STATUS_CODE';
+import { MESSAGES } from '../constants/MESSAGES';
 @injectable()
 export class TaskController {
   constructor(
@@ -12,7 +14,7 @@ export class TaskController {
     
       const task = await this.taskService.createTask(req.body);
       
-      res.status(201).json({ success: true, message: "Task created", task });
+      res.status(HTTP_STATUS.CREATED).json({ success: true, message: MESSAGES.TASK.CREATE, task });
    
   };
 
@@ -22,7 +24,7 @@ export class TaskController {
       const prority = req.query.priority as string | undefined;
       const status = req.query.status as string | undefined;
       const { tasks ,nextCursor,hasMore,counts} = await this.taskService.getTasksByUser(req.params.userId as string, prority, status,cursor);
-      res.json({ success: true, tasks, nextCursor, hasMore,counts });
+      res.status(HTTP_STATUS.OK).json({ success: true, tasks, nextCursor, hasMore,counts });
     
   };
 
@@ -30,9 +32,9 @@ export class TaskController {
     
       const task = await this.taskService.getTaskById(req.params.taskId as string);
       if (!task) {
-        return res.status(404).json({ success: false, message: "Task not found" });
+        return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: MESSAGES.TASK.NOT_FOUND });
       }
-      res.json({ success: true, task });
+      res.status(HTTP_STATUS.OK).json({ success: true, task });
     
   };
 
@@ -40,9 +42,9 @@ export class TaskController {
     
       const task = await this.taskService.updateTask(req.params.taskId as string, req.body);
       if (!task) {
-        return res.status(404).json({ success: false, message: "Task not found" });
+        return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: MESSAGES.TASK.NOT_FOUND });
       }
-      res.json({ success: true, message: "Task updated", task });
+      res.json({ success: true, message: MESSAGES.TASK.UPDATE, task });
     
   };
 
@@ -50,9 +52,9 @@ export class TaskController {
     
       const result = await this.taskService.deleteTask(req.params.taskId as string);
       if (!result) {
-        return res.status(404).json({ success: false, message: "Task not found" });
+        return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: MESSAGES.TASK.NOT_FOUND });
       }
-      res.json({ success: true, message: "Task deleted" });
+      res.status(HTTP_STATUS.OK).json({ success: true, message: MESSAGES.TASK.DELETE });
     
   };
 }

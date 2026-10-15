@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { injectable, inject } from 'tsyringe';
 import { IAuthService } from '../interfaces/services/auth.service.interface';
-
+import { HTTP_STATUS } from '../constants/HTTP_STATUS_CODE';
+import { MESSAGES } from '../constants/MESSAGES';
 
 @injectable()
 export class AuthController {
@@ -13,7 +14,7 @@ export class AuthController {
     
       const token = await this.authService.register(req.body);
      
-      res.status(201).json({ success: true, message: "User registered", token });
+      res.status(HTTP_STATUS.CREATED).json({ success: true, message: MESSAGES.USER.CREATED, token });
     
   };
 
@@ -24,9 +25,9 @@ export class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          maxAge: Number(process.env.COOKIE_AGE)
       });
-      res.json({ success: true, message: "Login successful", token, user });
+      res.status(HTTP_STATUS.OK).json({ success: true, message: MESSAGES.AUTH.LOGIN_SUCCESS, token, user });
    
   };
   logout = async (req: Request, res: Response) => {
@@ -36,7 +37,7 @@ export class AuthController {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
       });
-      res.json({ success: true, message: "Logout successful" });
+      res.status(HTTP_STATUS.OK).json({ success: true, message: MESSAGES.AUTH.LOGOUT_SUCCESS });
     
   };
 }

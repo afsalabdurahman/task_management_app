@@ -25,7 +25,7 @@ async findWithPagination(
     high: number;
   };
 }> {
-  console.log(cursor,"cursor")
+  
   let query = this.model.find(filter);
 
   // If cursor exists, fetch items after this cursor

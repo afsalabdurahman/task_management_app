@@ -33,6 +33,12 @@ export const MESSAGES = {
     CONFLICT: 'Resource conflict occurred',
     INTERNAL_SERVER_ERROR: 'Something went wrong on the server',
   },
+  TASK:{
+    CREATE:'Task is created',
+    NOT_FOUND:'Task is not found',
+    UPDATE:'Task is updated',
+    DELETE:'Task is deleted'
+  }
 } as const;
 
 export const ERROR_CODES = {
