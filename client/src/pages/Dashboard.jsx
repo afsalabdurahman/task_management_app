@@ -21,6 +21,7 @@ import { formatDate } from "../util/formatDate";
 import ShapeGrid from '../components/reusable/DashBackground';
 import { logout } from "../api/authApi";
 import { Pie, Bar } from 'react-chartjs-2';
+import { LogoutModal } from "../components/reusable/LogoutAlert";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -39,6 +40,7 @@ export const Dashboard = () => {
   const [status, setStatus] = useState("All");
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showLogoutAlert, setShowLogoutAlert] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
@@ -331,13 +333,16 @@ if(!user) {
                 <p className="text-sm font-medium text-white">{user?.name || "Guest"}</p>
                 <p className="text-xs text-slate-400">{user?.email}</p>
               </div>
-              <button onClick={handleLogout} className="flex items-center gap-2 rounded-2xl bg-white/10 hover:bg-red-500/10 hover:text-red-400 px-4 py-2 text-sm font-medium text-slate-300 transition-all">
+
+              <button onClick={() => setShowLogoutAlert(true)} className="flex items-center gap-2 rounded-2xl bg-white/10 hover:bg-red-500/10 hover:text-red-400 px-4 py-2 text-sm font-medium text-slate-300 transition-all">
                 <LogOut size={18} />
               </button>
             </div>
           </div>
         </div>
-
+              {showLogoutAlert && (
+                  <LogoutModal isOpen={showLogoutAlert} onConfirm={handleLogout} onCancel={() => setShowLogoutAlert(false)} />
+              )}
         {/* Stats Bar */}
         <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur-xl">
