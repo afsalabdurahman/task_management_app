@@ -26,7 +26,13 @@ export const errorMiddleware = (
       code: err.code,
     });
   }
-
+if (err.name === "MongoServerError" && "code" in err && err.code === 11000) {
+    return res.status(HTTP_STATUS.CONFLICT).json({
+      success: false,
+      message: "Duplicate task not allowed",
+      code: "DUPLICATE_KEY_ERROR",
+    });
+  }
   return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     success: false,
     message: "Internal Server Error",
