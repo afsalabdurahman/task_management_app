@@ -31,6 +31,7 @@ api.interceptors.response.use(
         case 500:
           console.log("Internal Server Error");
           break;
+          
       }
     }
 

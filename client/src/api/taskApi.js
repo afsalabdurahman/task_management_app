@@ -16,8 +16,14 @@ api.post(ROUTES.TASK_FORM, {
     toast.success('Task created successfully!');
   })
   .catch((error) => {
+    console.log(error.respons,"Api ERROR")
+      if (error.response?.data?.code =="DUPLICATE_KEY_ERROR"){
+        throw new Error(JSON.stringify({ apiError: "Duplicate task not allowed" }));
+      }
     if (error.response && error.response.data && error.response.data.message) {
+        
       const validationErrors = JSON.parse(error.response.data.message);
+     
       throw new Error(JSON.stringify(validationErrors));
     } else {
      

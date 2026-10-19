@@ -51,7 +51,7 @@ export const TaskForm = ({ isOpen, onClose ,data}) => {
      await taskFormApi(formData, user?.id)
   } catch (error) {
     if (error) {
-
+console.log(error.response,"Error creating task.apiiii");
     const validationErrors = JSON.parse(error.message);
     seterrors(validationErrors);
     return;
@@ -177,6 +177,7 @@ export const TaskForm = ({ isOpen, onClose ,data}) => {
     />
   </div>
 <p className="text-red-500">{errors.dueDate}</p>
+ <p className="text-red-500">{errors.apiError}</p>
   <div className="flex justify-end gap-3 pt-2">
     <button
       type="button"
