@@ -10,6 +10,7 @@ import { TaskData } from '../dtos/task.response.dto';
 
 @injectable()
 export class TaskService implements ITaskService {
+   
   constructor(
     @inject('ITaskRepository') private taskRepo: ITaskRepository
   ) {}
@@ -23,9 +24,9 @@ async createTask(data:TaskData) {
     const dueDate = data.dueDate && typeof data.dueDate === 'string' ? new Date(data.dueDate) : (data.dueDate as unknown as Date | undefined);
     const task = await this.taskRepo.create({...data, userId: new mongoose.Types.ObjectId(data.userId), dueDate});
 
-    const io = getIO();
+    
 
- io.emit("taskCreated", task);
+    getIO().to(`user:${data.userId}`).emit("taskCreated", task);
 
 
     return task;
@@ -45,17 +46,22 @@ async createTask(data:TaskData) {
   }
 
   async updateTask(taskId: string, data: Partial<{ title: string; description: string; dueDate: Date; priority: 'high' | 'medium' | 'low'; status: 'todo' | 'in-progress' | 'completed'; }>): Promise<ITask | null> {
-       const io = getIO();
+   
 
  
     const updatedTask= await this.taskRepo.update(taskId, data)
-    io.emit("taskUpdated", updatedTask);
+    getIO().to(`user:${updatedTask?.userId.toString()}`).emit("taskUpdated", updatedTask);
     return updatedTask
   }
 
   async deleteTask(taskId: string): Promise<boolean> {
+    const task = await this.taskRepo.findById(taskId);
+    if (!task) {
+      return false;
+    }
     const result = await this.taskRepo.delete(taskId);
-    getIO().emit("taskDeleted",taskId)
+    getIO().to(`user:${task.userId.toString()}`).emit("taskDeleted", taskId);
     return result;
   }
-}   
+}
+    

@@ -97,6 +97,10 @@ const [hasMore, setHasMore] = useState(true);
     console.log("Connected", socket.id);
   });
 
+     
+          socket.emit("join", savedUser ? JSON.parse(savedUser).id : null);
+          console.log("Joined room: user:" + savedUser ? JSON.parse(savedUser).id : null);
+      
   
 
   return () => {
