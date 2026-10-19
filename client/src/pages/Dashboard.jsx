@@ -1,10 +1,8 @@
 import {
   Calendar,
   ClipboardList,
-  MoreVertical,
   Pencil,
   Trash2,
-  Clock,
   LogOut,
   ArrowRightLeft,
   MoreVerticalIcon,
@@ -222,7 +220,7 @@ useEffect(() => {
     return prevTasks.filter((task) => task._id !== id);
   });
 
-    //  setTasks((prev) => prev.filter((task) => task._id !== id));
+    
     });
 
     return () => {
@@ -230,7 +228,7 @@ useEffect(() => {
       socket.off("taskUpdated");
       socket.off("taskDeleted");
     };
-    console.log("socket inial")
+   
   }, []);
 useEffect(() => {
     return () => {
@@ -283,21 +281,7 @@ if(!user) {
     </div>
   );
 }
-//   if (loading) {
-//   return (
-//     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-//       <div className="flex flex-col items-center gap-4">
-//         {/* Spinner */}
-//         <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-        
-//         {/* Loading Text */}
-//         <p className="text-white text-xl font-medium tracking-wide">
-//           Loading...
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 overflow-auto">
       <div className="fixed inset-0 -z-10 opacity-40">

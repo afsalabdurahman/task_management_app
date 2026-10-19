@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { injectable, inject } from 'tsyringe';
 import {  ITaskService} from '../interfaces/services/task.service.interface';
-import {socketConfig} from "../server"
 import { HTTP_STATUS } from '../constants/HTTP_STATUS_CODE';
 import { MESSAGES } from '../constants/MESSAGES';
 @injectable()

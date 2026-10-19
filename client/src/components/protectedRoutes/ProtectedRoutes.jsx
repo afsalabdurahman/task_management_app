@@ -7,11 +7,7 @@ export const ProtectedRoutes = () => {
     } else {
         return <Navigate to="/login" replace />;
     }
-  // const isAuthenticated = true; // Replace with your auth state
-
-  // return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+ 
 }
-//   const isAuthenticated = true; // Replace with your auth state
 
-//   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 

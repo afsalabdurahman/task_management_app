@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../api/authApi";
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [error,setError]=useState()
 const navigate = useNavigate();
 const [formData, setFormData] = useState({
     email: "",

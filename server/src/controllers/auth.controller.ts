@@ -13,8 +13,7 @@ export class AuthController {
   register = async (req: Request, res: Response) => {
     
       const token = await this.authService.register(req.body);
-     
-      res.status(HTTP_STATUS.CREATED).json({ success: true, message: MESSAGES.USER.CREATED, token });
+       res.status(HTTP_STATUS.CREATED).json({ success: true, message: MESSAGES.USER.CREATED, token });
     
   };
 

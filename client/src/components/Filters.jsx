@@ -1,5 +1,4 @@
 import { Filter } from "lucide-react";
-import { useEffect } from "react";
 
 export const TaskFilters = ({
   priority,

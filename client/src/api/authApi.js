@@ -7,7 +7,6 @@ export const signupApi = async (userData) => {
     const response = await api.post(ROUTES.Auth.REGISTER, userData);
     return response.data;
   } catch (error) {
-    console.error("Signup API error:", error.response ? error.response.data : error.message);
     throw error.response.data;
   }
 };

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { formatDate } from "../util/formatDate";
 import {taskFormApi, updateTaskApi} from "../api/taskApi";
-import { socket } from "../services/socket";
 import { toast } from "react-toastify";
 import { validateFormData } from "../util/validationForms";
 
@@ -51,12 +50,10 @@ export const TaskForm = ({ isOpen, onClose ,data}) => {
      await taskFormApi(formData, user?.id)
   } catch (error) {
     if (error) {
-console.log(error.response,"Error creating task.apiiii");
     const validationErrors = JSON.parse(error.message);
     seterrors(validationErrors);
     return;
   }
-    // toast.error("Error creating task.");
   }
 
 }

@@ -29,7 +29,7 @@ export const socketConfig = (server: HttpServer) => {
 
 export const getIO = () => {
     if (!io) {
-        console.log("Socket not initialized");
+       
         throw new Error("Socket.IO is not initialized. Call socketConfig() first.");
         
     }

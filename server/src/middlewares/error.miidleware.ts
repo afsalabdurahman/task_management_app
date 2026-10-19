@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError, ValidationError } from "../utils/errors";
 import { HTTP_STATUS } from "../constants/HTTP_STATUS_CODE";
+import { MESSAGES } from "../constants/MESSAGES";
 
 export const errorMiddleware = (
   err: Error,
@@ -29,7 +30,7 @@ export const errorMiddleware = (
 if (err.name === "MongoServerError" && "code" in err && err.code === 11000) {
     return res.status(HTTP_STATUS.CONFLICT).json({
       success: false,
-      message: "Duplicate task not allowed",
+      message: MESSAGES.TASK.DUPLICATE,
       code: "DUPLICATE_KEY_ERROR",
     });
   }

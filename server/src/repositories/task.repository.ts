@@ -1,9 +1,7 @@
-import { User, IUser } from '../models/user.model';   
 import { BaseRepository } from './base.repository';
-import { IUserRepository } from '../interfaces/repositories/user.repository.interface';
 import { ITask, Task } from '../models/task.model';
 import { ITaskRepository } from '../interfaces/repositories/task.repository.interface';
-import { Types } from 'mongoose';
+
 
 export class TaskRepository extends BaseRepository<ITask> implements ITaskRepository{
   constructor() {

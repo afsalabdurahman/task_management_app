@@ -2,8 +2,7 @@
 
 import jwt from 'jsonwebtoken';
 
-// const env = process.env;
-// const JWT_SECRET = env.JWT_SECRET ||""
+
 export interface AccessPayload {
   userId: string;
   email: string;

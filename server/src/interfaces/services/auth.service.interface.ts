@@ -1,5 +1,5 @@
 import { UserResponseDTO } from '../../dtos/user.response.dto';
-import { IUser} from '../../models/user.model';
+
 
 export interface IAuthService {
   register(data: { name: string; email: string; password: string }): Promise<string>;

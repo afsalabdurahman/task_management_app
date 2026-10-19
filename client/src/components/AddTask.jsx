@@ -4,26 +4,7 @@ import { TaskForm } from "./TaskForm";
 export const AddTask = () => {
   const [showModal, setShowModal] = useState(false);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    priority: "medium",
-    status: "todo",
-    dueDate: "",
-  });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    conso
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setShowModal(false);
-  };
 
   return (
     <div className="p-6">

@@ -1,6 +1,6 @@
 export const MESSAGES = {
   USER: {
-    CREATED: 'User registered successfully. Please verify your email.',
+    CREATED: 'User registered successfully,',
     VERIFIED: 'Email verified successfully',
     FETCHED: 'User profile fetched successfully',
     ALREADY_EXISTS: 'User with this email already exists',
@@ -10,6 +10,7 @@ export const MESSAGES = {
     EMAIL_NOT_VERIFIED: 'Please verify your email first',
     PASSWORD_RESET_SUCCESS: 'Password reset successful',
     UNAUTHORIZED: 'You do not have permission to perform this action',
+        
   },
   OTP: {
     INVALID: 'Invalid OTP. Please check and try again.',
@@ -37,7 +38,8 @@ export const MESSAGES = {
     CREATE:'Task is created',
     NOT_FOUND:'Task is not found',
     UPDATE:'Task is updated',
-    DELETE:'Task is deleted'
+    DELETE:'Task is deleted',
+    DUPLICATE:'Duplicate task not allowed',
   }
 } as const;
 
