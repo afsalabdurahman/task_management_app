@@ -7,6 +7,7 @@ import { validateUser } from '../utils/validators';
 import { generateAccessToken } from '../utils/jwt';
 import { NotFoundError } from '../utils/errors';
 import { MESSAGES } from '../constants/MESSAGES';
+import { toUserLoginResponse } from '../dtos/mappers/user.respose.mapper';
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -34,9 +35,11 @@ return MESSAGES.USER.CREATED;
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new NotFoundError('Invalid credentials');
     }
-
+    console.log("User found:", user);
+      const mappedUser: UserResponseDTO = toUserLoginResponse(user);
+     console.log("Mapped User:", mappedUser);
     const token = generateAccessToken({userId: user._id.toString(), email: user.email,});
-    return { token, user: { ...user.toObject(), id: user._id } };
+    return { token, user: mappedUser };
   }
 
 

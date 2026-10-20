@@ -7,6 +7,8 @@ import { getIO } from '../config/socket';
 import { validateTask } from '../utils/validators';
 import { ValidationError } from '../utils/errors';
 import { TaskData } from '../dtos/task.response.dto';
+import { toTaskResponse } from '../dtos/mappers/task.response.mapper';
+import { MESSAGES } from '../constants/MESSAGES';
 
 @injectable()
 export class TaskService implements ITaskService {
@@ -22,23 +24,31 @@ async createTask(data:TaskData) {
   }
     // ensure dueDate is a Date when creating the task (validateTask may accept string)
     const dueDate = data.dueDate && typeof data.dueDate === 'string' ? new Date(data.dueDate) : (data.dueDate as unknown as Date | undefined);
-    const task = await this.taskRepo.create({...data, userId: new mongoose.Types.ObjectId(data.userId), dueDate});
+    const task = await this.taskRepo.create({
+      title: data.title,
+      description: data.description,
+      priority: data.priority,
+      status: data.status,
+      userId: new mongoose.Types.ObjectId(data.userId),
+      dueDate,
+    });
+   
+   
+    const mappedTask = toTaskResponse(task)
+   
+    getIO().to(`user:${data.userId}`).emit("taskCreated", mappedTask);
 
-    
 
-    getIO().to(`user:${data.userId}`).emit("taskCreated", task);
-
-
-    return task;
+    return mappedTask;
 }
 
-  async getTasksByUser(userId: string, priority?: string, status?: string, cursor?: string): Promise<{ tasks: ITask[]; nextCursor: string | null; hasMore: boolean, counts: { total: number; completed: number; inprogress: number; high: number; }   }> {
+  async getTasksByUser(userId: string, priority?: string, status?: string, cursor?: string): Promise<{ tasks: TaskData[]; nextCursor: string | null; hasMore: boolean, counts: { total: number; completed: number; inprogress: number; high: number; }   }> {
     const filter: Partial<ITask> = { userId: new mongoose.Types.ObjectId(userId) };
     if (priority) filter.priority = priority.toLowerCase() as 'high' | 'medium' | 'low';
     if (status) filter.status = (status.toLowerCase() === 'in progress' ? 'in-progress' : status.toLowerCase()) as 'todo' | 'in-progress' | 'completed';
     const { tasks ,nextCursor,hasMore,counts} = await this.taskRepo.findWithPagination(filter, 3, cursor);
-
-    return { tasks, nextCursor, hasMore, counts };
+     const mappedTasks = tasks.map(task => toTaskResponse(task));
+    return { tasks: mappedTasks, nextCursor, hasMore, counts };
   }
 
   async getTaskById(taskId: string): Promise<ITask | null> {
@@ -50,7 +60,11 @@ async createTask(data:TaskData) {
 
  
     const updatedTask= await this.taskRepo.update(taskId, data)
-    getIO().to(`user:${updatedTask?.userId.toString()}`).emit("taskUpdated", updatedTask);
+    if(!updatedTask) throw new ValidationError(MESSAGES.TASK.NOT_FOUND)
+       
+      const mappedTask = toTaskResponse(updatedTask)
+    
+      getIO().to(`user:${updatedTask?.userId.toString()}`).emit("taskUpdated", mappedTask);
     return updatedTask
   }
 

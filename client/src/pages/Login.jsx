@@ -30,7 +30,7 @@ const handleSubmit = async (e)=>{
    localStorage.setItem('user', JSON.stringify({
       name: user.name,     // username
       email:user.email,
-      id: user._id
+      id: user.id
     }));
     navigate("/dashboard");
 
