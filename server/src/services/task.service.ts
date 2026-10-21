@@ -55,7 +55,7 @@ async createTask(data:TaskData) {
     return this.taskRepo.findById(taskId);
   }
 
-  async updateTask(taskId: string, data: Partial<{ title: string; description: string; dueDate: Date; priority: 'high' | 'medium' | 'low'; status: 'todo' | 'in-progress' | 'completed'; }>): Promise<ITask | null> {
+  async updateTask(taskId: string, data: Partial<{ title: string; description: string; dueDate: Date; priority: 'high' | 'medium' | 'low'; status: 'todo' | 'in-progress' | 'completed'; }>): Promise<TaskData | null> {
    
 
  
@@ -65,7 +65,7 @@ async createTask(data:TaskData) {
       const mappedTask = toTaskResponse(updatedTask)
     
       getIO().to(`user:${updatedTask?.userId.toString()}`).emit("taskUpdated", mappedTask);
-    return updatedTask
+    return mappedTask;
   }
 
   async deleteTask(taskId: string): Promise<boolean> {

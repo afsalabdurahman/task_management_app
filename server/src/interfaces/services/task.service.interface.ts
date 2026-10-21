@@ -5,6 +5,6 @@ export interface ITaskService {
     createTask(data: TaskData): Promise<TaskData>;
   getTasksByUser(userId: string, priority?: string, status?: string, cursor?: string): Promise<{ tasks: TaskData[]; nextCursor: string | null; hasMore: boolean , counts: { total: number; completed: number; inprogress: number; high: number; }   }>;
   getTaskById(taskId: string): Promise<ITask | null>;
-  updateTask(taskId: string, data: Partial<{ title: string; description: string; dueDate: Date; priority: 'high' | 'medium' | 'low'; status: 'todo' | 'in-progress' | 'completed'; }>): Promise<ITask | null>;
+  updateTask(taskId: string, data: Partial<{ title: string; description: string; dueDate: Date; priority: 'high' | 'medium' | 'low'; status: 'todo' | 'in-progress' | 'completed'; }>): Promise<TaskData | null>;
   deleteTask(taskId: string): Promise<boolean>;
 }

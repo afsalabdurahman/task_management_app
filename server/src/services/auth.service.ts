@@ -35,9 +35,7 @@ return MESSAGES.USER.CREATED;
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new NotFoundError('Invalid credentials');
     }
-    console.log("User found:", user);
       const mappedUser: UserResponseDTO = toUserLoginResponse(user);
-     console.log("Mapped User:", mappedUser);
     const token = generateAccessToken({userId: user._id.toString(), email: user.email,});
     return { token, user: mappedUser };
   }

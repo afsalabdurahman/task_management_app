@@ -38,7 +38,7 @@ const taskSchema = new Schema<ITask>(
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',      
+      ref: 'User',  
   }},
   {
     timestamps: true,
